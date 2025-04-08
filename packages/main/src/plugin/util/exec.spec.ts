@@ -35,6 +35,7 @@ import { Exec, getInstallationPath, macosExtraPath } from './exec.js';
 vi.mock(import('@expo/sudo-prompt'));
 vi.mock(import('/@/util.js'));
 vi.mock(import('node:child_process'));
+    isUnixLike: vi.fn(),
 
 const setEncodingMock = vi.fn();
 
@@ -350,11 +351,11 @@ describe('exec', () => {
     expect(stdout).toContain('Hello, World!');
   });
 
-  test('should run the command with privileges on Linux', async () => {
+  test('should run the command with privileges on Unix-like OS', async () => {
     const command = 'echo';
     const args = ['Hello, World!'];
 
-    vi.mocked(isLinux).mockReturnValue(true);
+    vi.mocked(isUnixLike).mockReturnValue(true);
 
     const on = vi.fn().mockImplementationOnce((event: string, cb: (arg0: string) => string) => {
       if (event === 'data') {
@@ -388,6 +389,7 @@ describe('exec', () => {
     const args = ['Hello, World!'];
 
     vi.mocked(isLinux).mockReturnValue(true);
+    (util.isUnixLike as Mock).mockReturnValue(true);
 
     const on = vi.fn().mockImplementationOnce((event: string, cb: (arg0: string) => string) => {
       if (event === 'data') {
@@ -552,6 +554,7 @@ describe('exec', () => {
     const args = ['Hello, World!'];
 
     vi.mocked(isLinux).mockReturnValue(true);
+    (util.isUnixLike as Mock).mockReturnValue(true);
 
     const on = vi.fn().mockImplementationOnce((event: string, cb: (arg0: string) => string) => {
       if (event === 'data') {

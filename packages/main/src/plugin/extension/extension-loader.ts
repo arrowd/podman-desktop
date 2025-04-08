@@ -92,7 +92,7 @@ import { withTimeout } from '/@/plugin/util/timeout.js';
 import { ViewRegistry } from '/@/plugin/view-registry.js';
 import { WebviewRegistry } from '/@/plugin/webview/webview-registry.js';
 import { securityRestrictionCurrentHandler } from '/@/security-restrictions-handler.js';
-import { getBase64Image, isLinux, isMac, isWindows } from '/@/util.js';
+import { getBase64Image, isFreeBSD, isLinux, isMac, isUnixLike, isWindows } from '/@/util.js';
 import product from '/@product.json' with { type: 'json' };
 
 import { type AnalyzedExtension, ExtensionAnalyzer, ExtensionAnalyzerOptions } from './extension-analyzer.js';
@@ -1473,6 +1473,12 @@ export class ExtensionLoader implements IAsyncDisposable {
       },
       get isLinux() {
         return isLinux();
+      },
+      get isFreeBSD() {
+        return isFreeBSD();
+      },
+      get isUnixLike() {
+        return isUnixLike();
       },
       openExternal: async (uri: containerDesktopAPI.Uri): Promise<boolean> => {
         const url = uri.toString();
