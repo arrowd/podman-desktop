@@ -211,8 +211,8 @@ export class ExtensionNotifications {
 
   public notifySetupPodmanNotLinux(): void {
     // Only show the notification on macOS and Windows
-    // as Podman is already installed on Linux and machine is OPTIONAL.
-    if (!extensionApi.env.isLinux) {
+    // as Podman is already installed on Linux/FreeBSD and machine is OPTIONAL.
+    if (!extensionApi.env.isUnixLike) {
       // push setup notification
       this.notifySetupPodman();
     }

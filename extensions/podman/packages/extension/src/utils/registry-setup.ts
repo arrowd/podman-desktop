@@ -41,7 +41,7 @@ export class RegistrySetup {
 
     if (extensionApi.env.isMac || extensionApi.env.isWindows) {
       podmanConfigContainersPath = path.resolve(os.homedir(), '.config/containers');
-    } else if (extensionApi.env.isLinux) {
+    } else if (extensionApi.env.isUnixLike) {
       const xdgRuntimeDirectory = process.env['XDG_RUNTIME_DIR'] ?? '';
       podmanConfigContainersPath = path.resolve(xdgRuntimeDirectory, 'containers');
     }

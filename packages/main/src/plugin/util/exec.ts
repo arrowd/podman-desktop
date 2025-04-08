@@ -24,7 +24,7 @@ import { delimiter, join } from 'node:path';
 import * as sudo from '@expo/sudo-prompt';
 import type { RunError, RunOptions, RunResult } from '@podman-desktop/api';
 
-import { isLinux, isMac, isWindows } from '../../util.js';
+import { isMac, isUnixLike, isWindows } from '../../util.js';
 import type { Proxy } from '../proxy.js';
 
 export const macosExtraPath = '/opt/podman/bin:/usr/local/bin:/opt/homebrew/bin:/opt/local/bin';
@@ -135,7 +135,7 @@ export class Exec {
           `do shell script "${escapedShellScript}" with prompt "Podman Desktop requires admin privileges " with administrator privileges`,
         ];
         command = 'osascript';
-      } else if (isLinux()) {
+      } else if (isUnixLike()) {
         args = [command, ...(args ?? [])];
         command = 'pkexec';
       }

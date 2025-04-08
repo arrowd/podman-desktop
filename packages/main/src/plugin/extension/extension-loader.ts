@@ -46,7 +46,7 @@ import { RepositoryInfoParser } from '/@api/repository-info-parser.js';
 import product from '/@product.json' with { type: 'json' };
 
 import { securityRestrictionCurrentHandler } from '../../security-restrictions-handler.js';
-import { getBase64Image, isLinux, isMac, isWindows } from '../../util.js';
+import { getBase64Image, isFreeBSD, isLinux, isMac, isUnixLike, isWindows } from '../../util.js';
 import { AuthenticationImpl } from '../authentication.js';
 import { CancellationTokenSource } from '../cancellation-token.js';
 import { Certificates } from '../certificates.js';
@@ -1442,6 +1442,12 @@ export class ExtensionLoader implements IAsyncDisposable {
       },
       get isLinux() {
         return isLinux();
+      },
+      get isFreeBSD() {
+        return isFreeBSD();
+      },
+      get isUnixLike() {
+        return isUnixLike();
       },
       openExternal: async (uri: containerDesktopAPI.Uri): Promise<boolean> => {
         const url = uri.toString();
