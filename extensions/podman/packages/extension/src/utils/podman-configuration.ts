@@ -423,7 +423,7 @@ export class PodmanConfiguration {
       podmanConfigContainersPath = path.resolve(os.homedir(), '.config', 'containers');
     } else if (extensionApi.env.isWindows) {
       podmanConfigContainersPath = path.resolve(os.homedir(), 'AppData', 'Roaming', 'containers');
-    } else if (extensionApi.env.isLinux) {
+    } else if (extensionApi.env.isUnixLike) {
       const xdgRuntimeDirectory = process.env['XDG_RUNTIME_DIR'] ?? '';
       podmanConfigContainersPath = path.resolve(xdgRuntimeDirectory, 'containers');
     }
