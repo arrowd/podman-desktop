@@ -32,6 +32,7 @@ import { OS } from './os';
 const osMock: OS = {
   isWindows: vi.fn(),
   isLinux: vi.fn(),
+  isFreeBSD: vi.fn(),
   isMac: vi.fn(),
   isUnixLike: vi.fn(),
 };
@@ -52,6 +53,7 @@ vi.mock('@podman-desktop/api', () => {
     env: {
       isUnixLike: false,
       isWindows: false,
+      isFreeBSD: false,
       isMac: false,
     },
   };
@@ -190,6 +192,14 @@ describe('parseVersion', () => {
 
 describe('Check default socket path', async () => {
   test('linux', async () => {
+    (osMock.isUnixLike as Mock).mockReturnValue(true);
+    (osMock.isMac as Mock).mockReturnValue(false);
+    (osMock.isWindows as Mock).mockReturnValue(false);
+    const result = detect.getSocketPath();
+    expect(result).toBe('/var/run/docker.sock');
+  });
+
+  test('freebsd', async () => {
     (osMock.isUnixLike as Mock).mockReturnValue(true);
     (osMock.isMac as Mock).mockReturnValue(false);
     (osMock.isWindows as Mock).mockReturnValue(false);
