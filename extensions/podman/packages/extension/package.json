@@ -351,7 +351,7 @@
         {
           "id": "checkUnsupportedPodmanMachineCommand",
           "title": "Checking if an old unsupported Podman machine exists",
-          "when": "!isLinux",
+          "when": "!isUnixLike",
           "command": "podman.onboarding.checkUnsupportedPodmanMachine",
           "completionEvents": [
             "onCommand:podman.onboarding.checkUnsupportedPodmanMachine"
@@ -381,12 +381,12 @@
               }
             ]
           ],
-          "when": "onboardingContext:unsupportedPodmanMachine && !isLinux"
+          "when": "onboardingContext:unsupportedPodmanMachine && !isUnixLike"
         },
         {
           "id": "checkPodmanMachineExistsCommand",
           "title": "Checking if a Podman machine exists",
-          "when": "!isLinux",
+          "when": "!isUnixLike",
           "command": "podman.onboarding.checkPodmanMachineExistsCommand",
           "completionEvents": [
             "onCommand:podman.onboarding.checkPodmanMachineExistsCommand"
@@ -395,12 +395,12 @@
         {
           "id": "welcomeCreatePodmanMachineView",
           "title": "We could not find any Podman machine. Let's create one!",
-          "when": "!onboardingContext:podmanMachineExists && !isLinux"
+          "when": "!onboardingContext:podmanMachineExists && !isUnixLike"
         },
         {
           "id": "createPodmanMachineCommand",
           "title": "Create a Podman machine",
-          "when": "!onboardingContext:podmanMachineExists && !isLinux",
+          "when": "!onboardingContext:podmanMachineExists && !isUnixLike",
           "completionEvents": [
             "onboardingContext:podmanMachineExists"
           ],
@@ -423,7 +423,7 @@
           ]
         }
       ],
-      "enablement": "(isLinux && onboardingContext:podmanIsNotInstalled) || (!isLinux && !onboardingContext:podmanMachineExists) || podman.needPodmanMachineCleanup"
+      "enablement": "(isUnixLike && onboardingContext:podmanIsNotInstalled) || (!isUnixLike && !onboardingContext:podmanMachineExists) || podman.needPodmanMachineCleanup"
     },
     "menus": {
       "dashboard/container-connection": [
