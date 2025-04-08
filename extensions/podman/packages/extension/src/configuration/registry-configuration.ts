@@ -249,7 +249,7 @@ export class RegistryConfigurationImpl implements RegistryConfiguration {
     let hostPath = this.getRegistryConfFilePath();
 
     // on macOS it's the same as the host
-    if (env.isMac || env.isLinux) {
+    if (env.isMac || env.isUnixLike) {
       return hostPath;
     }
 
