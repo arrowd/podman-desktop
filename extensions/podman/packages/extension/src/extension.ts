@@ -571,6 +571,31 @@ async function initDefaultLinux(provider: extensionApi.Provider): Promise<void> 
   storedExtensionContext?.subscriptions.push(disposable);
 }
 
+// on freebsd, socket is started by the rc script on a path /var/run/podman/podman.sock
+async function initDefaultFreeBSD(provider: extensionApi.Provider): Promise<void> {
+  const socketPath = '/var/run/podman/podman.sock';
+  if (!fs.existsSync(socketPath)) {
+    return;
+  }
+
+  const containerProviderConnection: extensionApi.ContainerProviderConnection = {
+    name: 'Podman',
+    type: 'podman',
+    status: () => podmanProviderStatus,
+    endpoint: {
+      socketPath,
+    },
+  };
+
+  monitorPodmanSocket(socketPath).catch((error: unknown) => {
+    console.error('Error monitoring podman socket', error);
+  });
+
+  const disposable = provider.registerContainerProviderConnection(containerProviderConnection);
+  currentConnections.set('podman', disposable);
+  storedExtensionContext?.subscriptions.push(disposable);
+}
+
 async function isPodmanSocketAlive(socketPath: string): Promise<boolean> {
   const pingUrl = {
     path: '/_ping',
@@ -696,9 +721,9 @@ export async function doMonitorProvider(provider: extensionApi.Provider): Promis
       provider.updateStatus('not-installed');
       extensionApi.context.setValue('podmanIsNotInstalled', true, 'onboarding');
       // if podman is not installed and the OS is linux we show the podman onboarding notification (if it has not been shown earlier)
-      // this should be limited to Linux as in other OSes the onboarding workflow is enabled based on the podman machine existance
+      // this should be limited to Linux/FreeBSD as in other OSes the onboarding workflow is enabled based on the podman machine existance
       // and the notification is handled by checking the machine
-      if (extensionApi.env.isLinux) {
+      if (extensionApi.env.isUnixLike) {
         // push setup notification
         extensionNotifications.notifySetupPodman();
       }
@@ -1530,6 +1555,24 @@ export async function start(
     extensionContext.subscriptions.push(disposable);
     initDefaultLinux(provider).catch((error: unknown) => {
       console.error('Error while initializing default linux', error);
+    });
+  }
+
+  // FreeBSD has native container support too, but does not support running
+  // podman service without root
+  if (extensionApi.env.isFreeBSD) {
+    const socketPath = '/var/run/podman/podman.sock';
+    if (!fs.existsSync(socketPath)) {
+      console.error(
+        'Podman extension:',
+        `Could not find the socket at ${socketPath}. Make sure you have podman_service_enable=YES in /etc/rc.conf .`,
+      );
+    }
+
+    provider.updateStatus('ready');
+
+    initDefaultFreeBSD(provider).catch((error: unknown) => {
+      console.error('Error while initializing default freebsd', error);
     });
   }
 
