@@ -288,6 +288,7 @@ const config = {
   },
   publish: {
     provider: 'github',
+    owner: 'arrowd',
     timeout: 10000,
   },
   /*extraMetadata: {
@@ -300,6 +301,7 @@ if (process.env.AIRGAP_DOWNLOAD) {
   config.publish = {
     publishAutoUpdate: false,
     provider: 'github',
+    owner: 'arrowd',
   };
 }
 
