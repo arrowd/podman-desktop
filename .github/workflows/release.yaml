@@ -59,7 +59,8 @@ jobs:
 
       - name: tag
         run: |
-          git config --local user.name ${{ github.actor }}
+          git config --local user.name 'Gleb Popov'
+          git config --local user.email 'arrowd@FreeBSD.org'
 
           # Add the new version in package.json file
           sed -i  "s#version\":\ \"\(.*\)\",#version\":\ \"${{ steps.TAG_UTIL.outputs.desktopVersion }}\",#g" package.json
