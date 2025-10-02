@@ -86,7 +86,7 @@ jobs:
           git add .flatpak-appdata.xml
 
           # commit the changes
-          git commit -m "chore: 🥁 tagging ${{ steps.TAG_UTIL.outputs.githubTag }} 🥳"
+          git commit -m "chore: � tagging ${{ steps.TAG_UTIL.outputs.githubTag }} �"
           echo "Tagging with ${{ steps.TAG_UTIL.outputs.githubTag }}"
           git tag ${{ steps.TAG_UTIL.outputs.githubTag }}
           git push origin ${{ steps.TAG_UTIL.outputs.githubTag }}
@@ -100,31 +100,6 @@ jobs:
           name: ${{ steps.TAG_UTIL.outputs.githubTag }}
           draft: true
           prerelease: true
-      - name: Create the PR to bump the version in the main branch (only if we're tagging from main branch)
-        if: ${{ github.event.inputs.branch == 'main' }}
-        run: |
-          git config --local user.name ${{ github.actor }}
-          git config --local user.email "fbenoit@redhat.com"
-          CURRENT_VERSION=$(echo "${{ steps.TAG_UTIL.outputs.desktopVersion }}")
-          tmp=${CURRENT_VERSION%.*}
-          minor=${tmp#*.}
-          bumpedVersion=${CURRENT_VERSION%%.*}.$((minor + 1)).0
-          bumpedBranchName="bump-to-${bumpedVersion}"
-          git checkout -b "${bumpedBranchName}"
-          sed -i  "s#version\":\ \"\(.*\)\",#version\":\ \"${bumpedVersion}-next\",#g" package.json
-          find extensions/* -maxdepth 5 -name "package.json" | xargs -I {} sed -i "s#version\":\ \"\(.*\)\",#version\":\ \"${bumpedVersion}-next\",#g" {}
-          git add package.json extensions/*/package.json extensions/*/packages/extension/package.json
-          git commit -s --amend -m "chore: bump version to ${bumpedVersion}"
-          git push origin "${bumpedBranchName}"
-          echo -e "📢 Bump version to ${bumpedVersion}\n\n${{ steps.TAG_UTIL.outputs.desktopVersion }} has been released.\n\n Time to switch to the new ${bumpedVersion} version 🥳" > /tmp/pr-title
-          pullRequestUrl=$(gh pr create --title "chore: 📢 Bump version to ${bumpedVersion}" --body-file /tmp/pr-title --head "${bumpedBranchName}" --base "main")
-          echo "📢 Pull request created: ${pullRequestUrl}"
-          echo "➡️ Flag the PR as being ready for review"
-          gh pr ready "${pullRequestUrl}"
-          echo "🔅 Mark the PR as being ok to be merged automatically"
-          gh pr merge "${pullRequestUrl}" --auto --rebase
-        env:
-          GITHUB_TOKEN: ${{ secrets.PODMAN_DESKTOP_BOT_TOKEN }}
 
   build:
     name: Build / ${{ matrix.os }} ${{ matrix.airgap == 'true' && '(Air Gap)' || ''  }}
@@ -135,12 +110,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: "windows-2025"
-          - os: "windows-2025"
-            airgap: "true"
-          - os: "macos-15"
-          - os: "macos-15"
-            airgap: "true"
           - os: "ubuntu-24.04"
     timeout-minutes: 60
     env:
@@ -221,36 +190,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           id: ${{ needs.tag.outputs.releaseId}}
-
-  # publish the pnpm store for flathub builds
-  pnpm-store:
-    needs: [tag, release]
-    name: pnpm-store-${{ matrix.arch }}
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-    strategy:
-      matrix:
-        arch: [amd64, arm64]
-
-    steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        with:
-          ref: ${{ needs.tag.outputs.githubTag}}
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
-      - name: create the pnpm store from the dependencies
-        run: |
-          podman run --platform linux/${{ matrix.arch }} -v $(pwd):/project --rm -it --entrypoint=sh node:24 -c "cd /project && npm install -g corepack@latest && corepack enable pnpm && COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm install --frozen-lockfile  --store-dir pnpm-store"
-          # now the store is in the pnpm-store directory
-          # create a tarball of the store
-          echo "Creating the archive store-cache-pnpm-${{ matrix.arch }}.tgz"
-          tar -czf store-cache-pnpm-${{ matrix.arch }}.tgz pnpm-store
-
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@6b7fa9f267e90b50a19fef07b3596790bb941741 # v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: store-cache-pnpm-${{ matrix.arch }}.tgz
-          tag: ${{ needs.tag.outputs.githubTag }}
