@@ -33,6 +33,9 @@ export async function findPodmanInstallations(): Promise<string[]> {
     if (extensionApi.env.isWindows) {
       // Windows: Use 'where podman' command
       commandResult = await extensionApi.process.exec('where', ['podman']);
+    } else if (extensionApi.env.isFreeBSD) {
+      // FreeBSD sh does not support -a for type
+      commandResult = await extensionApi.process.exec('bash', ['-c', 'type -a podman']);
     } else {
       // Unix/macOS: use 'which -a podman' command
       commandResult = await extensionApi.process.exec('which', ['-a', 'podman']);
