@@ -35,8 +35,12 @@ test('linux', async () => {
   const isWindows = os.isWindows();
   const isLinux = os.isLinux();
   const isMac = os.isMac();
+  const isFreeBSD = os.isFreeBSD();
+  const isUnixLike = os.isUnixLike();
   expect(isWindows).toBeFalsy();
   expect(isLinux).toBeTruthy();
+  expect(isFreeBSD).toBeFalsy();
+  expect(isUnixLike).toBeTruthy();
   expect(isMac).toBeFalsy();
 });
 
@@ -45,8 +49,12 @@ test('mac', async () => {
   const isWindows = os.isWindows();
   const isLinux = os.isLinux();
   const isMac = os.isMac();
+  const isFreeBSD = os.isFreeBSD();
+  const isUnixLike = os.isUnixLike();
   expect(isWindows).toBeFalsy();
   expect(isLinux).toBeFalsy();
+  expect(isFreeBSD).toBeFalsy();
+  expect(isUnixLike).toBeFalsy();
   expect(isMac).toBeTruthy();
 });
 
@@ -55,7 +63,11 @@ test('windows', async () => {
   const isWindows = os.isWindows();
   const isLinux = os.isLinux();
   const isMac = os.isMac();
+  const isFreeBSD = os.isFreeBSD();
+  const isUnixLike = os.isUnixLike();
   expect(isWindows).toBeTruthy();
   expect(isLinux).toBeFalsy();
+  expect(isFreeBSD).toBeFalsy();
+  expect(isUnixLike).toBeFalsy();
   expect(isMac).toBeFalsy();
 });

@@ -42,6 +42,7 @@ export function getSystemBinaryPath(binaryName: string): string {
       );
     case 'darwin':
     case 'linux':
+    case 'freebsd':
       return path.join(localBinDir, binaryName);
     default:
       throw new Error(`unsupported platform: ${process.platform}.`);
