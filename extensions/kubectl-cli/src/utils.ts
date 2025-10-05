@@ -23,7 +23,7 @@ import { OS } from './os';
 export async function makeExecutable(filePath: string): Promise<void> {
   // New OS class
   const os = new OS();
-  if (os.isLinux() || os.isMac()) {
+  if (os.isUnixLike() || os.isMac()) {
     // eslint-disable-next-line sonarjs/file-permissions
     await promises.chmod(filePath, 0o755);
   }

@@ -29,6 +29,8 @@ import type { OS } from './os';
 const osMock: OS = {
   isWindows: vi.fn(),
   isLinux: vi.fn(),
+  isFreeBSD: vi.fn(),
+  isUnixLike: vi.fn(),
   isMac: vi.fn(),
 };
 
