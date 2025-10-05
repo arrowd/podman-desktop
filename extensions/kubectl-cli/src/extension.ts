@@ -266,7 +266,7 @@ export async function findKubeCtl(extensionContext: extensionApi.ExtensionContex
     ]);
     vpState.version = extractVersion(result.stdout);
     // grab full path for Linux and mac
-    if (extensionApi.env.isLinux || extensionApi.env.isMac) {
+    if (extensionApi.env.isUnixLike || extensionApi.env.isMac) {
       try {
         const { stdout: fullPath } = await extensionApi.process.exec('which', [kubectlExecutableName]);
         vpState.path = fullPath;
