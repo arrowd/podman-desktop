@@ -45,6 +45,8 @@ export async function initContextKeysPlatform(): Promise<void> {
   CONSTANT_VALUES.set('isMac', platform === 'darwin');
   CONSTANT_VALUES.set('isLinux', platform === 'linux');
   CONSTANT_VALUES.set('isWindows', platform === 'win32');
+  CONSTANT_VALUES.set('isFreeBSD', platform === 'freebsd');
+  CONSTANT_VALUES.set('isUnixLike', platform === 'linux' || platform === 'freebsd');
 }
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
