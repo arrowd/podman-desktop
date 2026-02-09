@@ -53,6 +53,7 @@ body:
       options:
         - "1.25.0"
         - "next (development version)"
+        - "1.25.0"
         - "1.24.0"
         - "1.23.0"
         - "1.22.0"
